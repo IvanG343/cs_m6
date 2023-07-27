@@ -16,10 +16,11 @@ namespace cs_m6 {
 
             while (true) {
                 Console.WriteLine("Добро пожаловать в программу Справочник сотрудников.\n");
-                Console.Write("Для ввывода данных на экран введите 1, для добавления новой записи введите 2: ");
-                programMode = int.Parse(Console.ReadLine());
+                Console.Write("Для вывода данных на экран введите 1, для добавления новой записи введите 2: ");
 
-                if (programMode == 1) {
+                bool inputIsNum = int.TryParse(Console.ReadLine(), out programMode);
+
+                if (inputIsNum && programMode == 1) {
                     if (File.Exists(dbFile)) {
                         PrintData();
                         RefreshProgramWindow("Для продолжения нажмите любую клавишу.");
@@ -29,12 +30,13 @@ namespace cs_m6 {
                         RefreshProgramWindow("Ошибка чтения файла! Нажмите любую клавишу.");
                         continue;
                     }
-                } else if (programMode == 2) {
+                } else if (inputIsNum && programMode == 2) {
                     WriteData(GetEmpInfo());
                     RefreshProgramWindow("Данные успешно внесены, для продолжения нажмите любую клавишу");
                     continue;
                 } else {
-                    RefreshProgramWindow("Введена неверная комманда! Нажмите любую клавишу.");
+                    RefreshProgramWindow("Введена неверная комманда! Программа будет завершена.");
+                    break;
                 }
             }
 
@@ -69,7 +71,6 @@ namespace cs_m6 {
 
             void PrintData() {
                 using (StreamReader sr = new StreamReader(dbFile)) {
-                    Console.WriteLine("ID");
                     while (!sr.EndOfStream) {
                         string[] currentLine = sr.ReadLine().Split('#');
                         foreach (var word in currentLine) {
